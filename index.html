@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Special Anniversary</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;600&display=swap');
+        
+        :root {
+            --primary: #ec4899;  /* pinkish */
+            --secondary: #f43f5e; /* reddish */
+            --accent: #f97316; /* orange */
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #fef2f2;
+            overflow-x: hidden;
+            cursor: none; /* hide default cursor */
+        }
+        
+        .title {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        /* 3d card perspective */
+        .card-container {
+            perspective: 1000px;
+        }
+        
+        .card-inner {
+            transition: transform 1s;
+            transform-style: preserve-3d;
+        }
+        
+        /* flip card on hover */
+        .card-container:hover .card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .card-front, .card-back {
+            backface-visibility: hidden; /* hide backside when flipped */
+        }
+        
+        .card-back {
+            transform: rotateY(180deg); /* flipped side */
+        }
+        
+        /* heartbeat animation for hearts */
+        .heart {
+            animation: heartbeat 1.5s infinite;
+        }
+        
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        /* floating hearts style with svg hearts */
+        .floating-hearts span {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ec4899"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>') no-repeat;
+            animation: floating 4s linear infinite;
+        }
+        
+        @keyframes floating {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        /* photo hover effect */
+        .photo-item {
+            transition: transform 0.5s ease-in-out;
+        }
+        
+        .photo-item:hover {
+            transform: scale(1.05) rotate(2deg);
+            z-index: 10; /* bring on top */
+            box-shadow: 0 25px 50px -12px rgba(236, 72, 153, 0.25);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        /* reveal message animation */
+        .reveal-message {
+            clip-path: polygon(0 0, 100% 0, 100% 0, 0 0); /* hide initially */
+            transition: clip-path 1s ease-in-out;
+            background: linear-gradient(135deg, #fff 0%, #ffecec 100%);
+            background-size: 200% 200%;
+            animation: gradientBG 5s ease infinite;
+        }
+        
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* show message when active */
+        .reveal-message.active {
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+        }
+        
+        /* confetti falling style */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--primary);
+            animation: confetti-fall 5s linear forwards;
+        }
+        
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+        
+        /* slide in animation for entrance */
+        .entrance-animation {
+            animation: slideInFromBottom 1s ease-out forwards;
+        }
+        
+        @keyframes slideInFromBottom {
+            0% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        /* cool gradient text for title */
+        .title-text {
+            background: linear-gradient(90deg, #ec4899, #f97316);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* custom cursor styles */
+        .cursor-dot {
+            width: var(--size);
+            height: var(--size);
+            background-color: var(--primary);
+            border-radius: 50%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            mix-blend-mode: difference;
+            transition: transform 0.1s ease;
+        }
+        
+        .cursor-circle {
+            width: var(--size);
+            height: var(--size);
+            border: 2px solid var(--secondary);
+            border-radius: 50%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 9998;
+            transition: 
+                transform 0.3s ease,
+                width 0.3s ease,
+                height 0.3s ease;
+        }
+        
+        /* scale effect on hover for interactive things */
+        .interactive-element {
+            transition: transform 0.3s ease;
+        }
+        
+        .interactive-element:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="min-h-screen overflow-hidden">
+    <!-- custom cursor -->
+    <div class="cursor-dot" style="--size: 8px;"></div>
+    <div class="cursor-circle" style="--size: 48px;"></div>
+    
+    <!-- floating hearts container -->
+    <div class="floating-hearts fixed inset-0 w-full h-full pointer-events-none z-0">
+        <!-- hearts will be added here by js -->
+    </div>
+
+    <div class="container mx-auto px-4 py-12 relative z-10">
+        <!-- cover with title and open button -->
+        <div class="text-center mb-16 entrance-animation">
+            <div class="heart inline-block mb-6">
+                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/ddeeffe5-c97d-453a-8500-2975cef46a88.png" alt="Pink heart icon with white center" class="w-24 h-24 mx-auto drop-shadow-lg">
+            </div>
+            <h1 class="title title-text text-5xl md:text-6xl font-bold mb-4 animate-bounce">Happy Anniversary!</h1>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">This digital card was made with love to celebrate our special day</p>
+            <button id="openCardBtn" class="mt-8 px-8 py-3 bg-gradient-to-r from-pink-500 to-orange-500 text-white font-semibold rounded-full shadow-lg transform transition-all hover:scale-110 hover:shadow-2xl focus:outline-none ring-2 ring-offset-2 ring-pink-300 animate-pulse hover:animate-none">
+                Open Our Card
+            </button>
+        </div>
+
+        <!-- card content hidden at start -->
+        <div id="cardContent" class="max-w-4xl mx-auto hidden" style="opacity: 0;">
+            <!-- 3D flip card -->
+            <div class="card-container w-full h-96 mb-16">
+                <div class="card-inner w-full h-full relative">
+                    <div class="card-front absolute w-full h-full bg-gradient-to-br from-pink-100 to-orange-100 rounded-3xl shadow-2xl p-8 flex items-center justify-center">
+                        <div class="text-center">
+                            <h2 class="title text-3xl font-bold text-pink-600 mb-4">For Someone Special</h2>
+                            <div class="heart mx-auto mb-6">
+                                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/f6425709-f842-40f5-a83a-4090f3e4a473.png" alt="Medium pink heart with white center" class="w-16 h-16">
+                            </div>
+                            <p class="text-gray-700">Click anywhere to see your message</p>
+                        </div>
+                    </div>
+                    <div class="card-back absolute w-full h-full bg-gradient-to-br from-orange-100 to-pink-100 rounded-3xl shadow-2xl p-8 flex items-center justify-center overflow-hidden">
+                        <div id="cardMessage" class="reveal-message absolute inset-0 flex items-center justify-center p-8 rounded-3xl">
+                            <div class="text-center">
+                                <h3 class="title text-2xl font-bold text-pink-700 mb-4">To My Love,</h3>
+                                <p class="text-gray-700 mb-4">Every moment with you is special, but today is extra special because it's our anniversary!</p>
+                                <p class="text-gray-700">Thank you for being you. Here's to many more years together!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- photo slideshow -->
+            <div class="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 mb-16">
+                <h2 class="title text-3xl font-bold text-center text-pink-600 mb-8">Our Journey Together</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="photo-item relative group overflow-hidden rounded-2xl shadow-md cursor-pointer">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/2c38fcdc-a7f7-4f12-9033-78b9bb5ba595.png" alt="Romantic restaurant setting for our first date with candlelight and wine glasses" class="w-full h-64 object-cover">
+                        <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <p class="text-white font-semibold text-xl">Our First Date</p>
+                        </div>
+                    </div>
+                    <div class="photo-item relative group overflow-hidden rounded-2xl shadow-md cursor-pointer">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/7b057c81-50db-4b25-8d0a-364ef6a16c40.png" alt="Beach sunset during our tropical vacation with palm trees in the background" class="w-full h-64 object-cover">
+                        <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <p class="text-white font-semibold text-xl">Amazing Vacation</p>
+                        </div>
+                    </div>
+                    <div class="photo-item relative group overflow-hidden rounded-2xl shadow-md cursor-pointer">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/93094058-4341-415c-9fbe-0b02915f1f8b.png" alt="Romantic moment captured of us laughing together in golden sunlight" class="w-full h-64 object-cover">
+                        <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <p class="text-white font-semibold text-xl">Special Day</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- countdown timer -->
+            <div class="bg-gradient-to-r from-pink-200 to-orange-200 rounded-3xl shadow-xl p-8 text-center">
+                <h2 class="title text-3xl font-bold text-pink-700 mb-6">Our Next Milestone</h2>
+                <div class="flex justify-center space-x-4 mb-6">
+                    <div class="bg-white/90 rounded-xl shadow-md p-4 w-24">
+                        <div id="days" class="text-3xl font-bold text-pink-600">00</div>
+                        <div class="text-gray-600">Days</div>
+                    </div>
+                    <div class="bg-white/90 rounded-xl shadow-md p-4 w-24">
+                        <div id="hours" class="text-3xl font-bold text-pink-600">00</div>
+                        <div class="text-gray-600">Hours</div>
+                    </div>
+                    <div class="bg-white/90 rounded-xl shadow-md p-4 w-24">
+                        <div id="minutes" class="text-3xl font-bold text-pink-600">00</div>
+                        <div class="text-gray-600">Minutes</div>
+                    </div>
+                    <div class="bg-white/90 rounded-xl shadow-md p-4 w-24">
+                        <div id="seconds" class="text-3xl font-bold text-pink-600">00</div>
+                        <div class="text-gray-600">Seconds</div>
+                    </div>
+                </div>
+                <p class="text-gray-700">Until our next anniversary!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- background music -->
+    <audio id="backgroundMusic" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // make floating hearts and add to container
+        function createHearts() {
+            const container = document.querySelector('.floating-hearts');
+            for (let i = 0; i < 30; i++) {
+                const heart = document.createElement('span');
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.top = Math.random() * 100 + 'vh';
+                heart.style.width = (Math.random() * 20 + 10) + 'px';
+                heart.style.height = heart.style.width;
+                heart.style.opacity = Math.random() * 0.7 + 0.3;
+                heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                heart.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(heart);
+            }
+        }
+
+        // confetti effect, colors and random shapes
+        function createConfetti() {
+            const colors = ['#ec4899', '#f43f5e', '#f97316', '#f59e0b', '#10b981'];
+            
+            for (let i = 0; i < 200; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.width = Math.random() * 10 + 5;  // unused? but ok
+                confetti.style.height = confetti.width + 'px';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDuration = Math.random() * 3 + 2 + 's';
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                
+                if (Math.random() > 0.5) {
+                    confetti.style.borderRadius = '50%'; // sometimes round confetti
+                }
+                
+                document.body.appendChild(confetti);
+                
+                // remove after animation so no clutter
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
+            }
+        }
+
+        // countdown timer for next anniversary date
+        function updateCountdown() {
+            const now = new Date();
+            // next anniversary after 365 days from today lol, kinda rough but works
+            let nextAnniversary = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 365);
+            
+            if (now > nextAnniversary) {
+                nextAnniversary = new Date(now.getFullYear() + 1, nextAnniversary.getMonth(), nextAnniversary.getDate());
+            }
+            
+            const diff = nextAnniversary - now;
+            
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / (1000 * 60)) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+            
+            document.getElementById('days').textContent = days.toString().padStart(2, '0');
+            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+        }
+
+        // show card content when user clicks button
+        document.getElementById('openCardBtn').addEventListener('click', () => {
+            document.getElementById('cardContent').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('cardContent').style.opacity = 1;
+            }, 100);
+            
+            // play music when card opened
+            document.getElementById('backgroundMusic').play();
+            
+            // confetti blast
+            createConfetti();
+            
+            // reveal message on back card
+            const message = document.getElementById('cardMessage');
+            setTimeout(() => {
+                message.classList.add('active');
+            }, 1500);
+            
+            // hide open button cuz no need after open
+            document.getElementById('openCardBtn').style.display = 'none';
+        });
+
+        // cursor follow logic, two circles, small dot and bigger ring
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorCircle = document.querySelector('.cursor-circle');
+
+        document.addEventListener('mousemove', e => {
+            cursorDot.style.top = e.clientY + 'px';
+            cursorDot.style.left = e.clientX + 'px';
+            
+            cursorCircle.style.top = e.clientY + 'px';
+            cursorCircle.style.left = e.clientX + 'px';
+        });
+
+        // start floating hearts on page load
+        createHearts();
+
+        // update countdown every second
+        setInterval(updateCountdown, 1000);
+        updateCountdown();  // first run asap
+    </script>
+</body>
+</html>
